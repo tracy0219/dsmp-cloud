@@ -1,0 +1,59 @@
+server:
+  port: 4001
+
+spring:
+  application:
+    name: dsmp-config-server
+  profiles:
+    active: dev
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/tracy0219/dsmp-config.git
+          default-label: ${spring.profiles.active}   #解决监控down  获取 上 dev下的配置文件
+# 关闭安全管理
+management:
+  security:
+    enabled: false
+endpoints:
+  health:
+    sensitive: false
+---
+spring:
+  profiles: dev
+  rabbitmq:
+    host: 120.25.67.228
+    port: 5672
+    username: root
+    password: ZTJW2017ztjw
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 20
+  client:
+    serviceUrl:
+      defaultZone: http://dsmp:ztjw123@localhost:1025/eureka
+    registry-fetch-interval-seconds: 10
+---
+spring:
+  profiles: prd
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5682
+    username: dsmp
+    password: dsmp
+  cloud:
+    config:
+      retry:
+        initial-interval: 3000
+        multiplier: 1.5
+        max-interval: 20000
+        max-attempts: 6
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://Dsmp:ztjw123@eureka:1025/eureka

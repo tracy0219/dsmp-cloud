@@ -1,0 +1,7 @@
+FROM java:8-jre
+MAINTAINER Dsmp lengleng <wangiegie@gmail.com>
+
+ADD ./jar/Dsmp-config.jar /app/
+CMD ["java", "-Xmx200m", "-jar", "/app/Dsmp-config.jar"]
+
+EXPOSE 4001

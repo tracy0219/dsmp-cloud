@@ -1,0 +1,46 @@
+version: '2'
+services:
+  Dsmp-eureka:
+    build:
+      context: ./
+      dockerfile: Dockerfile-eureka
+    restart: always
+    ports:
+      - 1025:1025
+
+  Dsmp-config:
+    links:
+      - Dsmp-eureka:eureka
+    build:
+      context: ./
+      dockerfile: Dockerfile-config
+    restart: always
+
+  Dsmp-gateway:
+    links:
+      - Dsmp-eureka:eureka
+      - Dsmp-auth:auth
+    build:
+      context: ./
+      dockerfile: Dockerfile-gateway
+    restart: always
+    ports:
+      - 9999:9999
+
+  Dsmp-auth:
+    links:
+      - Dsmp-eureka:eureka
+    build:
+      context: ./
+      dockerfile: Dockerfile-auth
+    restart: always
+    ports:
+      - 3000:3000
+
+  Dsmp-upms-service:
+    links:
+      - Dsmp-eureka:eureka
+    build:
+      context: ./
+      dockerfile: Dockerfile-upms
+    restart: always
