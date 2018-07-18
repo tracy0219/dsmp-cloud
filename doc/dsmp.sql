@@ -1,0 +1,766 @@
+/*
+Navicat MySQL Data Transfer
+
+Source Server         : 119.23.161.95
+Source Server Version : 50722
+Source Host           : 119.23.161.95:3306
+Source Database       : dsmp
+
+Target Server Type    : MYSQL
+Target Server Version : 50722
+File Encoding         : 65001
+
+Date: 2018-07-18 09:37:29
+*/
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for job_execution_log
+-- ----------------------------
+DROP TABLE IF EXISTS `job_execution_log`;
+CREATE TABLE `job_execution_log` (
+  `id` varchar(40) NOT NULL,
+  `job_name` varchar(100) NOT NULL,
+  `task_id` varchar(255) NOT NULL,
+  `hostname` varchar(255) NOT NULL,
+  `ip` varchar(50) NOT NULL,
+  `sharding_item` int(11) NOT NULL,
+  `execution_source` varchar(20) NOT NULL,
+  `failure_cause` varchar(4000) DEFAULT NULL,
+  `is_success` int(11) NOT NULL,
+  `start_time` timestamp NULL DEFAULT NULL,
+  `complete_time` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+
+-- ----------------------------
+-- Records of job_execution_log
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for job_status_trace_log
+-- ----------------------------
+DROP TABLE IF EXISTS `job_status_trace_log`;
+CREATE TABLE `job_status_trace_log` (
+  `id` varchar(40) NOT NULL,
+  `job_name` varchar(100) NOT NULL,
+  `original_task_id` varchar(255) NOT NULL,
+  `task_id` varchar(255) NOT NULL,
+  `slave_id` varchar(50) NOT NULL,
+  `source` varchar(50) NOT NULL,
+  `execution_type` varchar(20) NOT NULL,
+  `sharding_item` varchar(100) NOT NULL,
+  `state` varchar(20) NOT NULL,
+  `message` varchar(4000) DEFAULT NULL,
+  `creation_time` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `TASK_ID_STATE_INDEX` (`task_id`,`state`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+
+-- ----------------------------
+-- Records of job_status_trace_log
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for sys_dept
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_dept`;
+CREATE TABLE `sys_dept` (
+  `dept_id` int(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) DEFAULT NULL COMMENT '部门名称',
+  `order_num` int(11) DEFAULT NULL COMMENT '排序',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `del_flag` char(1) DEFAULT '0' COMMENT '是否删除  -1：已删除  0：正常',
+  `parent_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`dept_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='部门管理';
+
+-- ----------------------------
+-- Records of sys_dept
+-- ----------------------------
+INSERT INTO `sys_dept` VALUES ('1', '山东农信', null, '2018-01-22 19:00:23', '2018-01-23 12:40:46', '0', '0');
+INSERT INTO `sys_dept` VALUES ('2', '沙县国际', null, '2018-01-22 19:00:38', '2018-01-23 12:42:04', '0', '0');
+INSERT INTO `sys_dept` VALUES ('3', '潍坊农信', null, '2018-01-22 19:00:44', '2018-01-23 12:40:56', '0', '1');
+INSERT INTO `sys_dept` VALUES ('4', '高新农信', null, '2018-01-22 19:00:52', '2018-01-23 12:41:11', '0', '3');
+INSERT INTO `sys_dept` VALUES ('5', '院校农信', null, '2018-01-22 19:00:57', '2018-01-23 12:41:22', '0', '4');
+INSERT INTO `sys_dept` VALUES ('6', '潍坊学院农信', '115', '2018-01-22 19:01:06', '2018-03-07 16:22:04', '0', '5');
+INSERT INTO `sys_dept` VALUES ('7', '山东沙县', null, '2018-01-22 19:01:57', '2018-01-23 12:42:15', '0', '2');
+INSERT INTO `sys_dept` VALUES ('8', '潍坊沙县', null, '2018-01-22 19:02:03', '2018-01-23 12:42:23', '0', '7');
+INSERT INTO `sys_dept` VALUES ('9', '高新沙县', null, '2018-01-22 19:02:14', '2018-03-07 16:28:14', '0', '8');
+
+-- ----------------------------
+-- Table structure for sys_dept_relation
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_dept_relation`;
+CREATE TABLE `sys_dept_relation` (
+  `ancestor` int(11) NOT NULL COMMENT '祖先节点',
+  `descendant` int(11) NOT NULL COMMENT '后代节点',
+  PRIMARY KEY (`ancestor`,`descendant`) USING BTREE,
+  KEY `idx1` (`ancestor`) USING BTREE,
+  KEY `idx2` (`descendant`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+
+-- ----------------------------
+-- Records of sys_dept_relation
+-- ----------------------------
+INSERT INTO `sys_dept_relation` VALUES ('1', '1');
+INSERT INTO `sys_dept_relation` VALUES ('1', '3');
+INSERT INTO `sys_dept_relation` VALUES ('1', '4');
+INSERT INTO `sys_dept_relation` VALUES ('1', '5');
+INSERT INTO `sys_dept_relation` VALUES ('1', '6');
+INSERT INTO `sys_dept_relation` VALUES ('2', '2');
+INSERT INTO `sys_dept_relation` VALUES ('2', '7');
+INSERT INTO `sys_dept_relation` VALUES ('2', '8');
+INSERT INTO `sys_dept_relation` VALUES ('2', '9');
+INSERT INTO `sys_dept_relation` VALUES ('3', '3');
+INSERT INTO `sys_dept_relation` VALUES ('3', '4');
+INSERT INTO `sys_dept_relation` VALUES ('3', '5');
+INSERT INTO `sys_dept_relation` VALUES ('3', '6');
+INSERT INTO `sys_dept_relation` VALUES ('4', '4');
+INSERT INTO `sys_dept_relation` VALUES ('4', '5');
+INSERT INTO `sys_dept_relation` VALUES ('4', '6');
+INSERT INTO `sys_dept_relation` VALUES ('5', '5');
+INSERT INTO `sys_dept_relation` VALUES ('5', '6');
+INSERT INTO `sys_dept_relation` VALUES ('6', '6');
+INSERT INTO `sys_dept_relation` VALUES ('7', '7');
+INSERT INTO `sys_dept_relation` VALUES ('7', '8');
+INSERT INTO `sys_dept_relation` VALUES ('7', '9');
+INSERT INTO `sys_dept_relation` VALUES ('8', '8');
+INSERT INTO `sys_dept_relation` VALUES ('8', '9');
+INSERT INTO `sys_dept_relation` VALUES ('9', '9');
+
+-- ----------------------------
+-- Table structure for sys_dict
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_dict`;
+CREATE TABLE `sys_dict` (
+  `id` int(64) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `value` varchar(100) NOT NULL COMMENT '数据值',
+  `label` varchar(100) NOT NULL COMMENT '标签名',
+  `type` varchar(100) NOT NULL COMMENT '类型',
+  `description` varchar(100) NOT NULL COMMENT '描述',
+  `sort` decimal(10,0) NOT NULL COMMENT '排序（升序）',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `remarks` varchar(255) DEFAULT NULL COMMENT '备注信息',
+  `del_flag` char(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `sys_dict_value` (`value`) USING BTREE,
+  KEY `sys_dict_label` (`label`) USING BTREE,
+  KEY `sys_dict_del_flag` (`del_flag`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='字典表';
+
+-- ----------------------------
+-- Records of sys_dict
+-- ----------------------------
+INSERT INTO `sys_dict` VALUES ('2', '9', '异常', 'log_type', '日志异常', '1', '2017-12-28 13:06:39', '2018-01-06 10:54:41', null, '0');
+INSERT INTO `sys_dict` VALUES ('3', '0', '正常', 'log_type', '正常', '1', '2018-05-11 23:52:57', '2018-05-11 23:52:57', '123', '0');
+
+-- ----------------------------
+-- Table structure for sys_log_0
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_log_0`;
+CREATE TABLE `sys_log_0` (
+  `id` bigint(64) NOT NULL COMMENT '编号',
+  `type` char(1) DEFAULT '1' COMMENT '日志类型',
+  `title` varchar(255) DEFAULT '' COMMENT '日志标题',
+  `service_id` varchar(32) DEFAULT NULL COMMENT '服务ID',
+  `create_by` varchar(64) DEFAULT NULL COMMENT '创建者',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `remote_addr` varchar(255) DEFAULT NULL COMMENT '操作IP地址',
+  `user_agent` varchar(1000) DEFAULT NULL COMMENT '用户代理',
+  `request_uri` varchar(255) DEFAULT NULL COMMENT '请求URI',
+  `method` varchar(10) DEFAULT NULL COMMENT '操作方式',
+  `params` text COMMENT '操作提交的数据',
+  `time` mediumtext COMMENT '执行时间',
+  `del_flag` char(1) DEFAULT '0' COMMENT '删除标记',
+  `exception` text COMMENT '异常信息',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `sys_log_create_by` (`create_by`) USING BTREE,
+  KEY `sys_log_request_uri` (`request_uri`) USING BTREE,
+  KEY `sys_log_type` (`type`) USING BTREE,
+  KEY `sys_log_create_date` (`create_time`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='日志表';
+
+-- ----------------------------
+-- Records of sys_log_0
+-- ----------------------------
+INSERT INTO `sys_log_0` VALUES ('1018394303511379970', '0', '', 'pig-upms-service', 'anonymousUser', '2018-07-15 15:18:17', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/85951531639089735', 'GET', '', '6405', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018394304211828738', '0', '', 'pig-upms-service', 'anonymousUser', '2018-07-15 15:18:17', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/19511531639087877', 'GET', '', '8259', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018394305579171842', '0', '', 'pig-upms-service', 'anonymousUser', '2018-07-15 15:18:18', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/57931531639092000', 'GET', '', '4044', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018394336168230914', '0', '', 'pig-upms-service', 'anonymousUser', '2018-07-15 15:18:25', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/34301531639105046', 'GET', '', '17', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018394388433453058', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:18:37', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/userPage', 'GET', 'limit=%5B20%5D&page=%5B1%5D&isAsc=%5Bfalse%5D', '330', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018394441801777154', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:18:50', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/allTree', 'GET', '', '109', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018394861693550594', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:20:30', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/dept/tree', 'GET', '', '76', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018394881230618626', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:20:35', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/dict/dictPage', 'GET', 'orderByField=%5Bcreate_time%5D&limit=%5B20%5D&page=%5B1%5D&isAsc=%5Bfalse%5D', '166', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018394882207891458', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:20:35', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/dept/tree', 'GET', '', '34', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018394889052995586', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:20:37', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/route/page', 'GET', 'limit=%5B20%5D&page=%5B1%5D', '104', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018395149590577154', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:21:39', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '8', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018395231182372866', '0', '', 'pig-auth', 'admin', '2018-07-15 15:21:58', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/authentication/removeToken', 'POST', 'accesstoken=%5BeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsaWNlbnNlIjoibWFkZSBieSBwaWciLCJ1c2VyX25hbWUiOiJhZG1pbiIsInNjb3BlIjpbInNlcnZlciJdLCJleHAiOjE1MzE2ODIzMTEsInVzZXJJZCI6MSwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJqdGkiOiI0MTc0MGMwZC0wZDBmLTQ1YTctYWYwOC1iZmI4MGI5MTY5MDciLCJjbGllbnRfaWQiOiJwaWcifQ.dTakO1O8b3fqg7NnIQeuCwU9x_ESyR8vvbKQgdl-GHs%5D&refreshToken=%5BeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsaWNlbnNlIjoibWFkZSBieSBwaWciLCJ1c2VyX25hbWUiOiJhZG1pbiIsInNjb3BlIjpbInNlcnZlciJdLCJhdGkiOiI0MTc0MGMwZC0wZDBmLTQ1YTctYWYwOC1iZmI4MGI5MTY5MDciLCJleHAiOjE1MzQyMzExMTEsInVzZXJJZCI6MSwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJqdGkiOiIzNjUyYjllYy1iMDNjLTQxOWQtOGE0My0xMzVjM2RiMWJhYjYiLCJjbGllbnRfaWQiOiJwaWcifQ.xHK2jQVWDGXOv-dNyB1sTjT4r9qggakgqbC8WSW8NVs%5D', '159', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018395231970902018', '0', '', 'pig-upms-service', 'anonymousUser', '2018-07-15 15:21:58', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/90781531639318634', 'GET', '', '14', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018395289005047810', '0', '', 'pig-auth', 'anonymousUser', '2018-07-15 15:22:12', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B90781531639318634%5D&code=%5Bx8d8%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '388', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018395336828502018', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:22:23', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/editInfo', 'PUT', '', '184', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018395355467988994', '0', '', 'pig-auth', 'admin', '2018-07-15 15:22:28', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/authentication/removeToken', 'POST', 'accesstoken=%5BeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsaWNlbnNlIjoibWFkZSBieSBwaWciLCJ1c2VyX25hbWUiOiJhZG1pbiIsInNjb3BlIjpbInNlcnZlciJdLCJleHAiOjE1MzE2ODI1MzIsInVzZXJJZCI6MSwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJqdGkiOiI3NDQ3NDZiMC1jMjRjLTQ5ZmItYjdkOS1mZTAxNTVmMGM2ZTkiLCJjbGllbnRfaWQiOiJwaWcifQ.AdW0nId1ZXzg6jAWDWV2wkN72HnNSIM4rUPI9ArAk4M%5D&refreshToken=%5BeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsaWNlbnNlIjoibWFkZSBieSBwaWciLCJ1c2VyX25hbWUiOiJhZG1pbiIsInNjb3BlIjpbInNlcnZlciJdLCJhdGkiOiI3NDQ3NDZiMC1jMjRjLTQ5ZmItYjdkOS1mZTAxNTVmMGM2ZTkiLCJleHAiOjE1MzQyMzEzMzIsInVzZXJJZCI6MSwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJqdGkiOiIzZDVkYjcxYy0wZjhkLTQ2OGMtYWMyOC04NDg1OGViYmRlYzAiLCJjbGllbnRfaWQiOiJwaWcifQ.BpkFVPNmdmyW8mhO4XM_9DBE9wviatZv2XILk3EJrzA%5D', '15', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018395356260712450', '0', '', 'pig-upms-service', 'anonymousUser', '2018-07-15 15:22:28', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/25221531639348268', 'GET', '', '49', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018395380856111106', '0', '', 'pig-upms-service', 'anonymousUser', '2018-07-15 15:22:34', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/smsCode/13575070469', 'GET', '', '203', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018395649417396226', '0', '', 'pig-auth', 'anonymousUser', '2018-07-15 15:23:38', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B1111%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '2', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018395694682324994', '0', '', 'pig-auth', 'anonymousUser', '2018-07-15 15:23:49', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B4430%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '1', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018395714106146818', '0', '', 'pig-upms-service', 'anonymousUser', '2018-07-15 15:23:53', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/smsCode/13575070469', 'GET', '', '60', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018395752790212610', '0', '', 'pig-auth', 'anonymousUser', '2018-07-15 15:24:03', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B5938%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '2', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018395758163116034', '0', '', 'pig-auth', 'anonymousUser', '2018-07-15 15:24:04', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B5938%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '2', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018395760327376898', '0', '', 'pig-auth', 'anonymousUser', '2018-07-15 15:24:04', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B5938%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '1', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018396079157395458', '0', '', 'pig-auth', 'anonymousUser', '2018-07-15 15:25:20', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B7159%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '484', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018399547926495234', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:39:07', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '153', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018399645678944258', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:39:31', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '13', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018399650171043842', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:39:32', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/userPage', 'GET', 'limit=%5B20%5D&page=%5B1%5D&isAsc=%5Bfalse%5D', '131', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018399653551652866', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:39:33', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/allTree', 'GET', '', '56', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018399664138076162', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:39:35', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/log/logPage', 'GET', 'orderByField=%5Bcreate_time%5D&limit=%5B20%5D&page=%5B1%5D&isAsc=%5Bfalse%5D', '516', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018399664804970498', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:39:35', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/dict/type/log_type', 'GET', '', '222', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018399665471864834', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:39:35', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/dict/dictPage', 'GET', 'orderByField=%5Bcreate_time%5D&limit=%5B20%5D&page=%5B1%5D&isAsc=%5Bfalse%5D', '66', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018399670878322690', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:39:37', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/dict/type/log_type', 'GET', '', '34', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018399969907032066', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:40:48', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/route/page', 'GET', 'limit=%5B20%5D&page=%5B1%5D', '82', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018399978740236290', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:40:50', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/dict/dictPage', 'GET', 'orderByField=%5Bcreate_time%5D&limit=%5B20%5D&page=%5B1%5D&isAsc=%5Bfalse%5D', '101', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018399982276034562', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:40:51', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/log/logPage', 'GET', 'orderByField=%5Bcreate_time%5D&limit=%5B20%5D&page=%5B1%5D&isAsc=%5Bfalse%5D', '126', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018399986780717058', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:40:52', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/role/rolePage', 'GET', 'limit=%5B20%5D&page=%5B1%5D', '78', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018400529716592642', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:43:01', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '12', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018442024939143170', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:27:54', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B73651531650464325%5D&code=%5Bxhg8%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '248', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018442025736060930', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:27:54', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/89851531650475208', 'GET', '', '19', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018442051820437506', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:28:00', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B89851531650475208%5D&code=%5B3p3y%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '156', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018442115397697538', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:28:15', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B22681531650489712%5D&code=%5Bb364%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '81', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018442136096587778', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:28:20', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/96081531650501351', 'GET', '', '14', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018442199174725634', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:28:35', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B96081531650501351%5D&code=%5Bby82%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '0', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018442200336547842', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:28:35', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/73761531650516656', 'GET', '', '23', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018442258754813954', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:28:49', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/smsCode/13575070469', 'GET', '', '152', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018442298932051970', '9', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:28:59', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B7548%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '1134', '0', '{\"timestamp\":\"2018-07-15T10:29:00.426+0000\",\"status\":500,\"error\":\"Internal Server Error\",\"exception\":\"org.springframework.security.oauth2.provider.NoSuchClientException\",\"message\":\"No client with requested id: pig\",\"path\":\"/mobile/token\"}');
+INSERT INTO `sys_log_0` VALUES ('1018443823418949634', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:35:02', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B50141531650894526%5D&code=%5B7xam%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '86', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018443872307757058', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:35:14', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B50141531650894526%5D&code=%5B7xam%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '33', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018443915395842050', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:35:24', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B25361531650915581%5D&code=%5Ba54f%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '83', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018443969976320002', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:35:37', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B25361531650915581%5D&code=%5Ba54f%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '0', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018443971121364994', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:35:37', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/66251531650938870', 'GET', '', '25', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018444045264076802', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:35:55', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/smsCode/13575070469', 'GET', '', '176', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018446744193843202', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:46:39', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B59251531651594201%5D&code=%5B1111%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '2', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018446744953012226', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:46:39', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/69491531651600298', 'GET', '', '23', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018446816658833410', '9', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:46:56', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B3284%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '119', '0', '{\"timestamp\":\"2018-07-15T10:46:57.548+0000\",\"status\":500,\"error\":\"Internal Server Error\",\"exception\":\"org.springframework.security.oauth2.provider.NoSuchClientException\",\"message\":\"No client with requested id: pig\",\"path\":\"/mobile/token\"}');
+INSERT INTO `sys_log_0` VALUES ('1018449529735999490', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:57:43', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/86801531652256897', 'GET', '', '5263', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018449550636216322', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:57:48', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/57991531652269320', 'GET', '', '11', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018449557607149570', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:57:49', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/80341531652271028', 'GET', '', '7', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018449560232783874', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:57:50', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/66631531652271656', 'GET', '', '6', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018449600112226306', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:57:59', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B72611531652272950%5D&code=%5B.333%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '250', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018449627706552322', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:58:06', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B72611531652272950%5D&code=%5B.333%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '125', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018449659633594370', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:58:14', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B72611531652272950%5D&code=%5B.333%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '52', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018449689782251522', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:58:21', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/30381531652297634', 'GET', '', '4923', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018455723485687810', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 19:22:19', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B28661531653735210%5D&code=%5B3paa%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '619', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018455724337131522', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:22:19', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/info', 'GET', '', '150', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018455758956916738', '0', '', 'dsmp-auth', 'admin', '2018-07-15 19:22:28', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/authentication/removeToken', 'POST', 'accesstoken=%5BeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsaWNlbnNlIjoibWFkZSBieSBkc21wIiwidXNlcl9uYW1lIjoiYWRtaW4iLCJzY29wZSI6WyJzZXJ2ZXIiXSwiZXhwIjoxNTMxNjk2OTQwLCJ1c2VySWQiOjEsImF1dGhvcml0aWVzIjpbIlJPTEVfQURNSU4iLCJST0xFX1VTRVIiXSwianRpIjoiYWFkNzdjNTItNmEwZC00MGZmLWJkZmUtOWI2OGUwYzkzM2JlIiwiY2xpZW50X2lkIjoiZHNtcCJ9._RxECZ04TGHI-YzfdSRtQv2Lcc6sOm9NdWLnx8MVQEs%5D&refreshToken=%5BeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsaWNlbnNlIjoibWFkZSBieSBkc21wIiwidXNlcl9uYW1lIjoiYWRtaW4iLCJzY29wZSI6WyJzZXJ2ZXIiXSwiYXRpIjoiYWFkNzdjNTItNmEwZC00MGZmLWJkZmUtOWI2OGUwYzkzM2JlIiwiZXhwIjoxNTM0MjQ1NzQwLCJ1c2VySWQiOjEsImF1dGhvcml0aWVzIjpbIlJPTEVfQURNSU4iLCJST0xFX1VTRVIiXSwianRpIjoiMTA1NWQ2N2ItOTJlOC00YmFlLWJjNmYtMzgxZTZjZTdjNjYxIiwiY2xpZW50X2lkIjoiZHNtcCJ9.c_auZNU5s9Fg_J8V_au3BGWDHqHd7SthK6JC7mWxZG4%5D', '60', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018455759879663618', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 19:22:28', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/21061531653749579', 'GET', '', '26', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018455785737547778', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 19:22:34', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/smsCode/13575070469', 'GET', '', '61', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018455882969903106', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 19:22:57', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B5115%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '7504', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018455883775209474', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:22:57', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/info', 'GET', '', '58', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018455951731322882', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:23:14', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/allTree', 'GET', '', '64', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018455954260488194', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:23:14', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/userPage', 'GET', 'limit=%5B20%5D&page=%5B1%5D&isAsc=%5Bfalse%5D', '180', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018455961596325890', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:23:16', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/dict/type/log_type', 'GET', '', '77', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018455974686748674', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:23:19', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/client/page', 'GET', 'limit=%5B20%5D&page=%5B1%5D', '89', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018455997319213058', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:23:24', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '12', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018456003602280450', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:23:26', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '10', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018456006244691970', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:23:27', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '10', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018456008593502210', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:23:27', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '11', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018460678758068226', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 19:42:00', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/55781531654921969', 'GET', '', '313', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018460739894243330', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 19:42:15', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B55781531654921969%5D&code=%5B....%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '2303', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018460751734763522', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:42:18', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/info', 'GET', '', '676', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018460754259734530', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:42:18', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '18', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1018460908626898946', '9', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:42:55', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/upload', 'POST', '', '2642', '0', '{\"msg\":\"无法获取服务端连接资源：can\'t create connection to/127.0.0.1:22122\",\"code\":1,\"data\":null}');
+INSERT INTO `sys_log_0` VALUES ('1018460980110422018', '9', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:43:12', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/upload', 'POST', '', '62', '0', '{\"msg\":\"Unable to borrow buffer from pool\",\"code\":1,\"data\":null}');
+INSERT INTO `sys_log_0` VALUES ('1018461072250892290', '9', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:43:34', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/upload', 'POST', '', '85', '0', '{\"msg\":\"Unable to borrow buffer from pool\",\"code\":1,\"data\":null}');
+INSERT INTO `sys_log_0` VALUES ('1019129631093784578', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-17 16:00:10', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/admin/code/63321531814316691', 'GET', '', '29706', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1019129790854823938', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-17 16:00:48', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/admin/code/81901531814450864', 'GET', '', '50', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1019129830457442306', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-17 16:00:58', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5BlBTqrKS0kZixOFXeZ0HRng%3D%3D%5D&randomStr=%5B81901531814450864%5D&code=%5Bdytf%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '354', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1019129832080637954', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-17 16:00:58', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/admin/code/18371531814460733', 'GET', '', '40', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1019129953304412162', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-17 16:01:27', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/admin/smsCode/13575070469', 'GET', '', '537', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1019130017577926658', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-17 16:01:42', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B7744%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '2024', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1019130034665521154', '0', '', 'dsmp-upms-service', 'admin', '2018-07-17 16:01:46', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '2153', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1019131818305880066', '0', '', 'dsmp-upms-service', 'admin', '2018-07-17 16:08:57', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/admin/user/userPage', 'GET', 'limit=%5B20%5D&page=%5B1%5D&isAsc=%5Bfalse%5D', '20122', '0', null);
+INSERT INTO `sys_log_0` VALUES ('1019133275725856770', '0', '', 'dsmp-upms-service', 'admin', '2018-07-17 16:14:39', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/admin/route/page', 'GET', 'limit=%5B20%5D&page=%5B1%5D', '5160', '0', null);
+
+-- ----------------------------
+-- Table structure for sys_log_1
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_log_1`;
+CREATE TABLE `sys_log_1` (
+  `id` bigint(64) NOT NULL COMMENT '编号',
+  `type` char(1) DEFAULT '1' COMMENT '日志类型',
+  `title` varchar(255) DEFAULT '' COMMENT '日志标题',
+  `service_id` varchar(32) DEFAULT NULL COMMENT '服务ID',
+  `create_by` varchar(64) DEFAULT NULL COMMENT '创建者',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `remote_addr` varchar(255) DEFAULT NULL COMMENT '操作IP地址',
+  `user_agent` varchar(1000) DEFAULT NULL COMMENT '用户代理',
+  `request_uri` varchar(255) DEFAULT NULL COMMENT '请求URI',
+  `method` varchar(10) DEFAULT NULL COMMENT '操作方式',
+  `params` text COMMENT '操作提交的数据',
+  `time` mediumtext COMMENT '执行时间',
+  `del_flag` char(1) DEFAULT '0' COMMENT '删除标记',
+  `exception` text COMMENT '异常信息',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `sys_log_create_by` (`create_by`) USING BTREE,
+  KEY `sys_log_request_uri` (`request_uri`) USING BTREE,
+  KEY `sys_log_type` (`type`) USING BTREE,
+  KEY `sys_log_create_date` (`create_time`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='日志表';
+
+-- ----------------------------
+-- Records of sys_log_1
+-- ----------------------------
+INSERT INTO `sys_log_1` VALUES ('1018394300797665281', '0', '', 'pig-upms-service', 'anonymousUser', '2018-07-15 15:18:17', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/83241531639085156', 'GET', '', '9778', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018394304895500289', '0', '', 'pig-upms-service', 'anonymousUser', '2018-07-15 15:18:17', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/58981531639090802', 'GET', '', '5335', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018394335383896065', '0', '', 'pig-auth', 'anonymousUser', '2018-07-15 15:18:25', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B57931531639092000%5D&code=%5Bfy4e%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '123', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018394363389263873', '0', '', 'pig-auth', 'anonymousUser', '2018-07-15 15:18:31', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B34301531639105046%5D&code=%5Bppnf%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '2231', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018394366316888065', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:18:32', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/info', 'GET', '', '322', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018394372675452929', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:18:34', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '1417', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018394404979982337', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:18:41', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/4', 'GET', '', '58', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018394406519291905', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:18:42', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/role/roleList/1', 'GET', '', '116', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018394470180438017', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:18:57', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/9', 'GET', '', '75', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018394537142501377', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:19:13', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/allTree', 'GET', '', '60', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018394539852021761', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:19:13', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/userPage', 'GET', 'limit=%5B20%5D&page=%5B1%5D&isAsc=%5Bfalse%5D', '116', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018394845688086529', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:20:26', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/role/rolePage', 'GET', 'limit=%5B20%5D&page=%5B1%5D', '112', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018394955453022209', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:20:52', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/dept/tree', 'GET', '', '55', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018394958707802113', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:20:53', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/route/page', 'GET', 'limit=%5B20%5D&page=%5B1%5D', '85', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018395138593112065', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:21:36', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '11', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018395289801965569', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:22:12', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/info', 'GET', '', '60', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018395290766655489', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:22:12', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '12', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018395745274019841', '0', '', 'pig-auth', 'anonymousUser', '2018-07-15 15:24:01', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B4430%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '2', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018395758951645185', '0', '', 'pig-auth', 'anonymousUser', '2018-07-15 15:24:04', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B5938%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '1', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018395759639511041', '0', '', 'pig-auth', 'anonymousUser', '2018-07-15 15:24:04', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B5938%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '1', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018395925025112065', '0', '', 'pig-auth', 'anonymousUser', '2018-07-15 15:24:44', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B5938%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '2', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018396018008637441', '0', '', 'pig-upms-service', 'anonymousUser', '2018-07-15 15:25:06', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/smsCode/13575070469', 'GET', '', '60', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018396079950118913', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:25:21', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/info', 'GET', '', '36', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018396080826728449', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:25:21', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '11', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018399562744971265', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:39:11', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '12', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018399657372663809', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:39:33', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/role/rolePage', 'GET', 'limit=%5B20%5D&page=%5B1%5D', '108', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018399670010101761', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:39:36', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/log/logPage', 'GET', 'orderByField=%5Bcreate_time%5D&limit=%5B20%5D&page=%5B1%5D&isAsc=%5Bfalse%5D', '129', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018399687978500097', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:39:41', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/dict/dictPage', 'GET', 'orderByField=%5Bcreate_time%5D&limit=%5B20%5D&page=%5B1%5D&isAsc=%5Bfalse%5D', '82', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018399730374524929', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:39:51', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/dept/tree', 'GET', '', '55', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018399734854041601', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:39:52', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/route/page', 'GET', 'limit=%5B20%5D&page=%5B1%5D', '81', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018399781322735617', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:40:03', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/client/page', 'GET', 'limit=%5B20%5D&page=%5B1%5D', '88', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018399972473946113', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:40:49', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/dept/tree', 'GET', '', '31', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018399983031009281', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:40:51', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/dict/type/log_type', 'GET', '', '6', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018399990039691265', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:40:53', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/allTree', 'GET', '', '53', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018399994624065537', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:40:54', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/userPage', 'GET', 'limit=%5B20%5D&page=%5B1%5D&isAsc=%5Bfalse%5D', '243', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018399999476875265', '0', '', 'pig-upms-service', 'admin', '2018-07-15 15:40:55', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/route/page', 'GET', 'limit=%5B20%5D&page=%5B1%5D', '85', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018441996564676609', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:27:47', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/17261531650459803', 'GET', '', '6816', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018441999538438145', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:27:47', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/73651531650464325', 'GET', '', '3105', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018442068148862977', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:28:04', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/44461531650485090', 'GET', '', '16', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018442086851264513', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:28:08', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/22681531650489712', 'GET', '', '77', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018442134964125697', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:28:20', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B22681531650489712%5D&code=%5Bb364%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '0', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018442174407360513', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:28:29', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B96081531650501351%5D&code=%5Bby82%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '56', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018443804997566465', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:34:58', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/50141531650894526', 'GET', '', '4391', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018443873465384961', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:35:14', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/25361531650915581', 'GET', '', '50', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018444073080700929', '9', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:36:02', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B4273%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '954', '0', '{\"timestamp\":\"2018-07-15T10:36:03.414+0000\",\"status\":500,\"error\":\"Internal Server Error\",\"exception\":\"org.springframework.security.oauth2.provider.NoSuchClientException\",\"message\":\"No client with requested id: pig\",\"path\":\"/mobile/token\"}');
+INSERT INTO `sys_log_1` VALUES ('1018446719988514817', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:46:33', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/59251531651594201', 'GET', '', '18', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018446778142539777', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:46:47', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/smsCode/13575070469', 'GET', '', '62', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018449562099249153', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:57:50', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/91891531652272076', 'GET', '', '4', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018449565807013889', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:57:51', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/72611531652272950', 'GET', '', '6', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018449702574878721', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 18:58:24', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/smsCode/13575070469', 'GET', '', '296', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018449745457442817', '9', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 18:58:34', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B2190%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '923', '0', '{\"timestamp\":\"2018-07-15T10:58:35.811+0000\",\"status\":500,\"error\":\"Internal Server Error\",\"exception\":\"org.springframework.security.oauth2.provider.NoSuchClientException\",\"message\":\"No client with requested id: pig\",\"path\":\"/mobile/token\"}');
+INSERT INTO `sys_log_1` VALUES ('1018450949595983873', '9', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 19:03:21', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B2190%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '78', '0', '{\"timestamp\":\"2018-07-15T11:03:22.916+0000\",\"status\":500,\"error\":\"Internal Server Error\",\"exception\":\"org.springframework.security.oauth2.provider.NoSuchClientException\",\"message\":\"No client with requested id: pig\",\"path\":\"/mobile/token\"}');
+INSERT INTO `sys_log_1` VALUES ('1018452779390464001', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 19:10:37', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/mobile/token', 'POST', 'mobile=%5B13575070469%5D&code=%5B2190%5D&grant_type=%5Bmobile%5D&scope=%5Bserver%5D', '10035', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018455545802387457', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 19:21:37', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/82341531653698636', 'GET', '', '55', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018455699687206913', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-15 19:22:14', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/code/28661531653735210', 'GET', '', '22', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018455726945988609', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:22:20', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '568', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018455884815396865', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:22:58', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '15', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018455957443964929', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:23:15', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/role/rolePage', 'GET', 'limit=%5B20%5D&page=%5B1%5D', '97', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018455960803602433', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:23:16', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/log/logPage', 'GET', 'orderByField=%5Bcreate_time%5D&limit=%5B20%5D&page=%5B1%5D&isAsc=%5Bfalse%5D', '344', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018455962376466433', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:23:16', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/dict/dictPage', 'GET', 'orderByField=%5Bcreate_time%5D&limit=%5B20%5D&page=%5B1%5D&isAsc=%5Bfalse%5D', '57', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018455965316673537', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:23:17', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/dept/tree', 'GET', '', '60', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018455968210743297', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:23:18', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/route/page', 'GET', 'limit=%5B20%5D&page=%5B1%5D', '85', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018456002121691137', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:23:26', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '10', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018456030290636801', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:23:32', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/route/page', 'GET', 'limit=%5B20%5D&page=%5B1%5D', '82', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018460736459108353', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 19:42:14', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B55781531654921969%5D&code=%5B....%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '2936', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018460737268609025', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-15 19:42:14', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5B123456%5D&randomStr=%5B55781531654921969%5D&code=%5B....%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '3077', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018460750883319809', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:42:18', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/info', 'GET', '', '716', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1018460752753979393', '0', '', 'dsmp-upms-service', 'admin', '2018-07-15 19:42:18', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3423.2 Safari/537.36', '/admin/user/info', 'GET', '', '727', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1019129630192009217', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-17 16:00:10', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5BlBTqrKS0kZixOFXeZ0HRng%3D%3D%5D&randomStr=%5B63321531814316691%5D&code=%5B3123%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '21524', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1019129631764873217', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-17 16:00:10', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/admin/code/32531531814356531', 'GET', '', '9450', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1019129632431767553', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-17 16:00:10', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5BlBTqrKS0kZixOFXeZ0HRng%3D%3D%5D&randomStr=%5B32531531814356531%5D&code=%5B3123%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '10141', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1019129633107050497', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-17 16:00:11', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/admin/code/34361531814400412', 'GET', '', '61', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1019129633782333441', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-17 16:00:11', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5BlBTqrKS0kZixOFXeZ0HRng%3D%3D%5D&randomStr=%5B32531531814356531%5D&code=%5B3123%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '10338', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1019129634486976513', '0', '', 'dsmp-upms-service', 'anonymousUser', '2018-07-17 16:00:11', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/admin/code/50561531814405681', 'GET', '', '68', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1019129789009330177', '0', '', 'dsmp-auth', 'anonymousUser', '2018-07-17 16:00:48', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/auth/oauth/token', 'POST', 'password=%5BlBTqrKS0kZixOFXeZ0HRng%3D%3D%5D&randomStr=%5B50561531814405681%5D&code=%5Bdryr%5D&grant_type=%5Bpassword%5D&scope=%5Bserver%5D&username=%5Badmin%5D', '367', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1019130022833389569', '0', '', 'dsmp-upms-service', 'admin', '2018-07-17 16:01:43', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/admin/user/info', 'GET', '', '231', '0', null);
+INSERT INTO `sys_log_1` VALUES ('1019133197049102337', '0', '', 'dsmp-upms-service', 'admin', '2018-07-17 16:14:35', null, '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36', '/admin/menu/userMenu', 'GET', '', '38', '0', null);
+
+-- ----------------------------
+-- Table structure for sys_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_menu`;
+CREATE TABLE `sys_menu` (
+  `menu_id` int(11) NOT NULL COMMENT '菜单ID',
+  `name` varchar(32) NOT NULL COMMENT '菜单名称',
+  `permission` varchar(32) DEFAULT NULL COMMENT '菜单权限标识',
+  `path` varchar(128) DEFAULT NULL COMMENT '前端URL',
+  `url` varchar(128) DEFAULT NULL COMMENT '请求链接',
+  `method` varchar(32) DEFAULT NULL COMMENT '请求方法',
+  `parent_id` int(11) DEFAULT NULL COMMENT '父菜单ID',
+  `icon` varchar(32) DEFAULT NULL COMMENT '图标',
+  `component` varchar(64) DEFAULT NULL COMMENT 'VUE页面',
+  `sort` int(11) DEFAULT '1' COMMENT '排序值',
+  `type` char(1) DEFAULT NULL COMMENT '菜单类型 （0菜单 1按钮）',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `del_flag` char(1) DEFAULT '0' COMMENT '0--正常 1--删除',
+  PRIMARY KEY (`menu_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='菜单权限表';
+
+-- ----------------------------
+-- Records of sys_menu
+-- ----------------------------
+INSERT INTO `sys_menu` VALUES ('1', '系统管理', null, '/admin', null, null, '-1', 'icon-xitongguanli', 'Layout', '1', '0', '2017-11-07 20:56:00', '2018-05-14 21:53:22', '0');
+INSERT INTO `sys_menu` VALUES ('2', '用户管理', null, 'user', '', null, '1', 'icon-yonghuguanli', 'views/admin/user/index', '2', '0', '2017-11-02 22:24:37', '2018-05-14 22:11:35', '0');
+INSERT INTO `sys_menu` VALUES ('3', '菜单管理', null, 'menu', '', null, '1', 'icon-caidanguanli', 'views/admin/menu/index', '3', '0', '2017-11-08 09:57:27', '2018-05-14 22:11:21', '0');
+INSERT INTO `sys_menu` VALUES ('4', '角色管理', null, 'role', null, null, '1', 'icon-jiaoseguanli', 'views/admin/role/index', '4', '0', '2017-11-08 10:13:37', '2018-05-14 22:11:19', '0');
+INSERT INTO `sys_menu` VALUES ('5', '日志管理', null, 'log', null, null, '1', 'icon-rizhiguanli', 'views/admin/log/index', '5', '0', '2017-11-20 14:06:22', '2018-05-14 22:11:18', '0');
+INSERT INTO `sys_menu` VALUES ('6', '字典管理', null, 'dict', null, null, '1', 'icon-zygl', 'views/admin/dict/index', '6', '0', '2017-11-29 11:30:52', '2018-05-14 22:12:48', '0');
+INSERT INTO `sys_menu` VALUES ('7', '部门管理', null, 'dept', null, null, '1', 'icon-iconbmgl', 'views/admin/dept/index', '7', '0', '2018-01-20 13:17:19', '2018-05-14 22:11:16', '0');
+INSERT INTO `sys_menu` VALUES ('8', '系统监控', null, '', null, null, '-1', 'icon-iconbmgl', null, '8', '0', '2018-01-22 12:30:41', '2018-05-14 20:41:16', '0');
+INSERT INTO `sys_menu` VALUES ('9', '服务监控', null, 'http://139.224.200.249:5001', null, null, '8', 'icon-jiankong', null, '9', '0', '2018-01-23 10:53:33', '2018-04-21 03:51:56', '0');
+INSERT INTO `sys_menu` VALUES ('10', 'zipkin监控', null, 'http://139.224.200.249:5002', null, null, '8', 'icon-jiankong', null, '11', '0', '2018-01-23 10:55:18', '2018-04-22 07:02:34', '0');
+INSERT INTO `sys_menu` VALUES ('11', 'pinpoint监控', null, 'https://pinpoint.pig4cloud.com', null, null, '8', 'icon-xiazaihuancun', null, '10', '0', '2018-01-25 11:08:52', '2018-04-22 07:02:38', '0');
+INSERT INTO `sys_menu` VALUES ('12', '缓存状态', null, 'http://139.224.200.249:8585', null, null, '8', 'icon-ecs-status', null, '12', '0', '2018-01-23 10:56:11', '2018-04-21 03:51:47', '0');
+INSERT INTO `sys_menu` VALUES ('13', 'ELK状态', null, 'http://139.224.200.249:5601', null, null, '8', 'icon-ecs-status', null, '13', '0', '2018-01-23 10:55:47', '2018-04-21 03:51:40', '0');
+INSERT INTO `sys_menu` VALUES ('14', '接口文档', null, 'http://139.224.200.249:9999/swagger-ui.html', null, null, '8', 'icon-wendangdocument72', null, '14', '0', '2018-01-23 10:56:43', '2018-04-21 03:50:47', '0');
+INSERT INTO `sys_menu` VALUES ('15', '任务监控', null, 'http://139.224.200.249:8899', null, null, '8', 'icon-jiankong', null, '15', '0', '2018-01-23 10:55:18', '2018-04-21 03:51:34', '0');
+INSERT INTO `sys_menu` VALUES ('21', '用户查看', '', null, '/admin/user/**', 'GET', '2', null, null, null, '1', '2017-11-07 20:58:05', '2018-02-04 14:28:49', '0');
+INSERT INTO `sys_menu` VALUES ('22', '用户新增', 'sys_user_add', null, '/admin/user/*', 'POST', '2', null, null, null, '1', '2017-11-08 09:52:09', '2017-12-04 16:31:10', '0');
+INSERT INTO `sys_menu` VALUES ('23', '用户修改', 'sys_user_upd', null, '/admin/user/**', 'PUT', '2', null, null, null, '1', '2017-11-08 09:52:48', '2018-01-17 17:40:01', '0');
+INSERT INTO `sys_menu` VALUES ('24', '用户删除', 'sys_user_del', null, '/admin/user/*', 'DELETE', '2', null, null, null, '1', '2017-11-08 09:54:01', '2017-12-04 16:31:18', '0');
+INSERT INTO `sys_menu` VALUES ('31', '菜单查看', null, null, '/admin/menu/**', 'GET', '3', null, null, null, '1', '2017-11-08 09:57:56', '2017-11-14 17:29:17', '0');
+INSERT INTO `sys_menu` VALUES ('32', '菜单新增', 'sys_menu_add', null, '/admin/menu/*', 'POST', '3', null, null, null, '1', '2017-11-08 10:15:53', '2018-01-20 14:37:50', '0');
+INSERT INTO `sys_menu` VALUES ('33', '菜单修改', 'sys_menu_edit', null, '/admin/menu/*', 'PUT', '3', null, null, null, '1', '2017-11-08 10:16:23', '2018-01-20 14:37:56', '0');
+INSERT INTO `sys_menu` VALUES ('34', '菜单删除', 'sys_menu_del', null, '/admin/menu/*', 'DELETE', '3', null, null, null, '1', '2017-11-08 10:16:43', '2018-01-20 14:38:03', '0');
+INSERT INTO `sys_menu` VALUES ('41', '角色查看', null, null, '/admin/role/**', 'GET', '4', null, null, null, '1', '2017-11-08 10:14:01', '2018-02-04 13:55:06', '0');
+INSERT INTO `sys_menu` VALUES ('42', '角色新增', 'sys_role_add', null, '/admin/role/*', 'POST', '4', null, null, null, '1', '2017-11-08 10:14:18', '2018-04-20 07:21:38', '0');
+INSERT INTO `sys_menu` VALUES ('43', '角色修改', 'sys_role_edit', null, '/admin/role/*', 'PUT', '4', null, null, null, '1', '2017-11-08 10:14:41', '2018-04-20 07:21:50', '0');
+INSERT INTO `sys_menu` VALUES ('44', '角色删除', 'sys_role_del', null, '/admin/role/*', 'DELETE', '4', null, null, null, '1', '2017-11-08 10:14:59', '2018-04-20 07:22:00', '0');
+INSERT INTO `sys_menu` VALUES ('45', '分配权限', 'sys_role_perm', null, '/admin/role/*', 'PUT', '4', null, null, null, '1', '2018-04-20 07:22:55', '2018-04-20 07:24:40', '0');
+INSERT INTO `sys_menu` VALUES ('51', '日志查看', null, null, '/admin/log/**', 'GET', '5', null, null, null, '1', '2017-11-20 14:07:25', '2018-02-04 14:28:53', '0');
+INSERT INTO `sys_menu` VALUES ('52', '日志删除', 'sys_log_del', null, '/admin/log/*', 'DELETE', '5', null, null, null, '1', '2017-11-20 20:37:37', '2017-11-28 17:36:52', '0');
+INSERT INTO `sys_menu` VALUES ('61', '字典查看', null, null, '/admin/dict/**', 'GET', '6', null, null, null, '1', '2017-11-19 22:04:24', '2017-11-29 11:31:24', '0');
+INSERT INTO `sys_menu` VALUES ('62', '字典删除', 'sys_dict_del', null, '/admin/dict/**', 'DELETE', '6', null, null, null, '1', '2017-11-29 11:30:11', '2018-01-07 15:40:51', '0');
+INSERT INTO `sys_menu` VALUES ('63', '字典新增', 'sys_dict_add', null, '/admin/dict/**', 'POST', '6', null, null, null, '1', '2018-05-11 22:34:55', null, '0');
+INSERT INTO `sys_menu` VALUES ('64', '字典修改', 'sys_dict_upd', null, '/admin/dict/**', 'PUT', '6', null, null, null, '1', '2018-05-11 22:36:03', null, '0');
+INSERT INTO `sys_menu` VALUES ('71', '部门查看', '', null, '/admin/dept/**', 'GET', '7', null, '', null, '1', '2018-01-20 13:17:19', '2018-01-20 14:55:24', '0');
+INSERT INTO `sys_menu` VALUES ('72', '部门新增', 'sys_dept_add', null, '/admin/dept/**', 'POST', '7', null, null, null, '1', '2018-01-20 14:56:16', '2018-01-20 21:17:57', '0');
+INSERT INTO `sys_menu` VALUES ('73', '部门修改', 'sys_dept_edit', null, '/admin/dept/**', 'PUT', '7', null, null, null, '1', '2018-01-20 14:56:59', '2018-01-20 21:17:59', '0');
+INSERT INTO `sys_menu` VALUES ('74', '部门删除', 'sys_dept_del', null, '/admin/dept/**', 'DELETE', '7', null, null, null, '1', '2018-01-20 14:57:28', '2018-01-20 21:18:05', '0');
+INSERT INTO `sys_menu` VALUES ('100', '客户端管理', '', 'client', '', '', '1', 'icon-bangzhushouji', 'views/admin/client/index', '9', '0', '2018-01-20 13:17:19', '2018-05-15 21:28:10', '0');
+INSERT INTO `sys_menu` VALUES ('101', '客户端新增', 'sys_client_add', null, '/admin/client/**', 'POST', '100', '1', null, null, '1', '2018-05-15 21:35:18', '2018-05-16 10:35:26', '0');
+INSERT INTO `sys_menu` VALUES ('102', '客户端修改', 'sys_client_upd', null, '/admin/client/**', 'PUT', '100', null, null, null, '1', '2018-05-15 21:37:06', '2018-05-15 21:52:30', '0');
+INSERT INTO `sys_menu` VALUES ('103', '客户端删除', 'sys_client_del', null, '/admin/client/**', 'DELETE', '100', null, null, null, '1', '2018-05-15 21:39:16', '2018-05-15 21:52:34', '0');
+INSERT INTO `sys_menu` VALUES ('104', '客户端查看', null, null, '/admin/client/**', 'GET', '100', null, null, null, '1', '2018-05-15 21:39:57', '2018-05-15 21:52:40', '0');
+INSERT INTO `sys_menu` VALUES ('110', '路由管理', null, 'route', null, null, '1', 'icon-luyou', 'views/admin/route/index', '8', '0', '2018-05-15 21:44:51', '2018-05-16 06:58:20', '0');
+INSERT INTO `sys_menu` VALUES ('111', '路由查看', null, null, '/admin/route/**', 'GET', '110', null, null, null, '1', '2018-05-15 21:45:59', '2018-05-16 07:23:04', '0');
+INSERT INTO `sys_menu` VALUES ('112', '路由新增', 'sys_route_add', null, '/admin/route/**', 'POST', '110', null, null, null, '1', '2018-05-15 21:52:22', '2018-05-15 21:53:46', '0');
+INSERT INTO `sys_menu` VALUES ('113', '路由修改', 'sys_route_upd', null, '/admin/route/**', 'PUT', '110', null, null, null, '1', '2018-05-15 21:55:38', null, '0');
+INSERT INTO `sys_menu` VALUES ('114', '路由删除', 'sys_route_del', null, '/admin/route/**', 'DELETE', '110', null, null, null, '1', '2018-05-15 21:56:45', null, '0');
+
+-- ----------------------------
+-- Table structure for sys_oauth_client_details
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_oauth_client_details`;
+CREATE TABLE `sys_oauth_client_details` (
+  `client_id` varchar(40) NOT NULL,
+  `resource_ids` varchar(256) DEFAULT NULL,
+  `client_secret` varchar(256) DEFAULT NULL,
+  `scope` varchar(256) DEFAULT NULL,
+  `authorized_grant_types` varchar(256) DEFAULT NULL,
+  `web_server_redirect_uri` varchar(256) DEFAULT NULL,
+  `authorities` varchar(256) DEFAULT NULL,
+  `access_token_validity` int(11) DEFAULT NULL,
+  `refresh_token_validity` int(11) DEFAULT NULL,
+  `additional_information` varchar(4096) DEFAULT NULL,
+  `autoapprove` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`client_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+
+-- ----------------------------
+-- Records of sys_oauth_client_details
+-- ----------------------------
+INSERT INTO `sys_oauth_client_details` VALUES ('app', null, 'app', 'server', 'password,refresh_token', null, null, null, null, null, 'true');
+INSERT INTO `sys_oauth_client_details` VALUES ('dsmp', null, 'dsmp', 'server', 'password,refresh_token', null, null, null, null, null, 'false');
+
+-- ----------------------------
+-- Table structure for sys_role
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role`;
+CREATE TABLE `sys_role` (
+  `role_id` int(11) NOT NULL AUTO_INCREMENT,
+  `role_name` varchar(64) COLLATE utf8mb4_bin NOT NULL,
+  `role_code` varchar(64) COLLATE utf8mb4_bin NOT NULL,
+  `role_desc` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `del_flag` char(1) COLLATE utf8mb4_bin DEFAULT '0' COMMENT '删除标识（0-正常,1-删除）',
+  PRIMARY KEY (`role_id`) USING BTREE,
+  UNIQUE KEY `role_idx1_role_code` (`role_code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- ----------------------------
+-- Records of sys_role
+-- ----------------------------
+INSERT INTO `sys_role` VALUES ('1', 'admin', 'ROLE_ADMIN', '超级管理员', '2017-10-29 15:45:51', '2018-04-22 11:40:29', '0');
+INSERT INTO `sys_role` VALUES ('14', 'demo', 'demo', 'demo用户', '2018-04-20 07:14:32', '2018-04-21 23:35:22', '0');
+
+-- ----------------------------
+-- Table structure for sys_role_dept
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role_dept`;
+CREATE TABLE `sys_role_dept` (
+  `id` int(20) NOT NULL AUTO_INCREMENT,
+  `role_id` int(20) DEFAULT NULL COMMENT '角色ID',
+  `dept_id` int(20) DEFAULT NULL COMMENT '部门ID',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='角色与部门对应关系';
+
+-- ----------------------------
+-- Records of sys_role_dept
+-- ----------------------------
+INSERT INTO `sys_role_dept` VALUES ('11', '1', '1');
+INSERT INTO `sys_role_dept` VALUES ('14', '14', '1');
+
+-- ----------------------------
+-- Table structure for sys_role_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role_menu`;
+CREATE TABLE `sys_role_menu` (
+  `role_id` int(11) NOT NULL COMMENT '角色ID',
+  `menu_id` int(11) NOT NULL COMMENT '菜单ID',
+  PRIMARY KEY (`role_id`,`menu_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='角色菜单表';
+
+-- ----------------------------
+-- Records of sys_role_menu
+-- ----------------------------
+INSERT INTO `sys_role_menu` VALUES ('1', '1');
+INSERT INTO `sys_role_menu` VALUES ('1', '2');
+INSERT INTO `sys_role_menu` VALUES ('1', '3');
+INSERT INTO `sys_role_menu` VALUES ('1', '4');
+INSERT INTO `sys_role_menu` VALUES ('1', '5');
+INSERT INTO `sys_role_menu` VALUES ('1', '6');
+INSERT INTO `sys_role_menu` VALUES ('1', '7');
+INSERT INTO `sys_role_menu` VALUES ('1', '8');
+INSERT INTO `sys_role_menu` VALUES ('1', '9');
+INSERT INTO `sys_role_menu` VALUES ('1', '10');
+INSERT INTO `sys_role_menu` VALUES ('1', '11');
+INSERT INTO `sys_role_menu` VALUES ('1', '12');
+INSERT INTO `sys_role_menu` VALUES ('1', '13');
+INSERT INTO `sys_role_menu` VALUES ('1', '14');
+INSERT INTO `sys_role_menu` VALUES ('1', '15');
+INSERT INTO `sys_role_menu` VALUES ('1', '21');
+INSERT INTO `sys_role_menu` VALUES ('1', '22');
+INSERT INTO `sys_role_menu` VALUES ('1', '23');
+INSERT INTO `sys_role_menu` VALUES ('1', '24');
+INSERT INTO `sys_role_menu` VALUES ('1', '31');
+INSERT INTO `sys_role_menu` VALUES ('1', '32');
+INSERT INTO `sys_role_menu` VALUES ('1', '33');
+INSERT INTO `sys_role_menu` VALUES ('1', '34');
+INSERT INTO `sys_role_menu` VALUES ('1', '41');
+INSERT INTO `sys_role_menu` VALUES ('1', '42');
+INSERT INTO `sys_role_menu` VALUES ('1', '43');
+INSERT INTO `sys_role_menu` VALUES ('1', '44');
+INSERT INTO `sys_role_menu` VALUES ('1', '45');
+INSERT INTO `sys_role_menu` VALUES ('1', '51');
+INSERT INTO `sys_role_menu` VALUES ('1', '52');
+INSERT INTO `sys_role_menu` VALUES ('1', '61');
+INSERT INTO `sys_role_menu` VALUES ('1', '62');
+INSERT INTO `sys_role_menu` VALUES ('1', '63');
+INSERT INTO `sys_role_menu` VALUES ('1', '64');
+INSERT INTO `sys_role_menu` VALUES ('1', '71');
+INSERT INTO `sys_role_menu` VALUES ('1', '72');
+INSERT INTO `sys_role_menu` VALUES ('1', '73');
+INSERT INTO `sys_role_menu` VALUES ('1', '74');
+INSERT INTO `sys_role_menu` VALUES ('1', '100');
+INSERT INTO `sys_role_menu` VALUES ('1', '101');
+INSERT INTO `sys_role_menu` VALUES ('1', '102');
+INSERT INTO `sys_role_menu` VALUES ('1', '103');
+INSERT INTO `sys_role_menu` VALUES ('1', '104');
+INSERT INTO `sys_role_menu` VALUES ('1', '110');
+INSERT INTO `sys_role_menu` VALUES ('1', '111');
+INSERT INTO `sys_role_menu` VALUES ('1', '112');
+INSERT INTO `sys_role_menu` VALUES ('1', '113');
+INSERT INTO `sys_role_menu` VALUES ('1', '114');
+INSERT INTO `sys_role_menu` VALUES ('14', '1');
+INSERT INTO `sys_role_menu` VALUES ('14', '2');
+INSERT INTO `sys_role_menu` VALUES ('14', '3');
+INSERT INTO `sys_role_menu` VALUES ('14', '4');
+INSERT INTO `sys_role_menu` VALUES ('14', '5');
+INSERT INTO `sys_role_menu` VALUES ('14', '6');
+INSERT INTO `sys_role_menu` VALUES ('14', '7');
+INSERT INTO `sys_role_menu` VALUES ('14', '8');
+INSERT INTO `sys_role_menu` VALUES ('14', '9');
+INSERT INTO `sys_role_menu` VALUES ('14', '10');
+INSERT INTO `sys_role_menu` VALUES ('14', '11');
+INSERT INTO `sys_role_menu` VALUES ('14', '12');
+INSERT INTO `sys_role_menu` VALUES ('14', '13');
+INSERT INTO `sys_role_menu` VALUES ('14', '14');
+INSERT INTO `sys_role_menu` VALUES ('14', '15');
+INSERT INTO `sys_role_menu` VALUES ('14', '21');
+INSERT INTO `sys_role_menu` VALUES ('14', '31');
+INSERT INTO `sys_role_menu` VALUES ('14', '41');
+INSERT INTO `sys_role_menu` VALUES ('14', '51');
+INSERT INTO `sys_role_menu` VALUES ('14', '61');
+INSERT INTO `sys_role_menu` VALUES ('14', '71');
+
+-- ----------------------------
+-- Table structure for sys_user
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_user`;
+CREATE TABLE `sys_user` (
+  `user_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `username` varchar(64) COLLATE utf8mb4_bin NOT NULL COMMENT '用户名',
+  `password` varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  `salt` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '随机盐',
+  `phone` varchar(20) COLLATE utf8mb4_bin NOT NULL COMMENT '简介',
+  `avatar` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '头像',
+  `dept_id` int(11) DEFAULT NULL COMMENT '部门ID',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `del_flag` char(1) COLLATE utf8mb4_bin DEFAULT '0' COMMENT '0-正常，1-删除',
+  PRIMARY KEY (`user_id`) USING BTREE,
+  UNIQUE KEY `user_idx1_username` (`username`) USING BTREE,
+  UNIQUE KEY `user_idx2_phone` (`phone`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC COMMENT='用户表';
+
+-- ----------------------------
+-- Records of sys_user
+-- ----------------------------
+INSERT INTO `sys_user` VALUES ('1', 'admin', '$2a$10$vg5QNHhCknAqevx9vM2s5esllJEzF/pa8VZXtFYHhhOhUcCw/GWyS', null, '13575070469', null, '1', '2018-04-20 07:15:18', '2018-07-15 15:22:23', '0');
+INSERT INTO `sys_user` VALUES ('4', 'pig', '$2a$10$vg5QNHhCknAqevx9vM2s5esllJEzF/pa8VZXtFYHhhOhUcCw/GWyS', null, '17034642118', null, '1', '2018-04-22 11:39:07', '2018-05-10 18:01:11', '0');
+
+-- ----------------------------
+-- Table structure for sys_user_role
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_user_role`;
+CREATE TABLE `sys_user_role` (
+  `user_id` int(11) NOT NULL COMMENT '用户ID',
+  `role_id` int(11) NOT NULL COMMENT '角色ID',
+  PRIMARY KEY (`user_id`,`role_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='用户角色表';
+
+-- ----------------------------
+-- Records of sys_user_role
+-- ----------------------------
+INSERT INTO `sys_user_role` VALUES ('1', '1');
+INSERT INTO `sys_user_role` VALUES ('4', '14');
+
+-- ----------------------------
+-- Table structure for sys_zuul_route
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_zuul_route`;
+CREATE TABLE `sys_zuul_route` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'router Id',
+  `path` varchar(255) NOT NULL COMMENT '路由路径',
+  `service_id` varchar(255) NOT NULL COMMENT '服务名称',
+  `url` varchar(255) DEFAULT NULL COMMENT 'url代理',
+  `strip_prefix` char(1) DEFAULT '1' COMMENT '转发去掉前缀',
+  `retryable` char(1) DEFAULT '1' COMMENT '是否重试',
+  `enabled` char(1) DEFAULT '1' COMMENT '是否启用',
+  `sensitiveHeaders_list` varchar(255) DEFAULT NULL COMMENT '敏感请求头',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `del_flag` char(1) DEFAULT '0' COMMENT '删除标识（0-正常,1-删除）',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='动态路由配置表';
+
+-- ----------------------------
+-- Records of sys_zuul_route
+-- ----------------------------
+INSERT INTO `sys_zuul_route` VALUES ('1', 'test', 'test', 'tsest', '1', '1', '1', '0', '2018-05-16 07:28:43', '2018-05-16 07:35:08', '1');
+INSERT INTO `sys_zuul_route` VALUES ('2', 'sdfg', 'we', 'jjj', '1', '1', '1', 'jj', '2018-05-16 07:35:43', '2018-05-17 13:56:14', '1');
+INSERT INTO `sys_zuul_route` VALUES ('3', '/demo/**', 'dsmp-demo-service', '', '1', '1', '1', '', '2018-05-17 14:09:06', '2018-07-15 17:18:19', '0');
+INSERT INTO `sys_zuul_route` VALUES ('4', '/admin/**', 'dsmp-upms-service', '', '1', '1', '1', '', '2018-05-21 11:40:38', '2018-07-15 17:18:21', '0');
+INSERT INTO `sys_zuul_route` VALUES ('5', '/auth/**', 'dsmp-auth', '', '1', '1', '1', '', '2018-05-21 11:41:08', '2018-07-15 17:18:25', '0');
+
+-- ----------------------------
+-- Table structure for zipkin_annotations
+-- ----------------------------
+DROP TABLE IF EXISTS `zipkin_annotations`;
+CREATE TABLE `zipkin_annotations` (
+  `trace_id_high` bigint(20) NOT NULL DEFAULT '0' COMMENT 'If non zero, this means the trace uses 128 bit traceIds instead of 64 bit',
+  `trace_id` bigint(20) NOT NULL COMMENT 'coincides with zipkin_spans.trace_id',
+  `span_id` bigint(20) NOT NULL COMMENT 'coincides with zipkin_spans.id',
+  `a_key` varchar(255) NOT NULL COMMENT 'BinaryAnnotation.key or Annotation.value if type == -1',
+  `a_value` blob COMMENT 'BinaryAnnotation.value(), which must be smaller than 64KB',
+  `a_type` int(11) NOT NULL COMMENT 'BinaryAnnotation.type() or -1 if Annotation',
+  `a_timestamp` bigint(20) DEFAULT NULL COMMENT 'Used to implement TTL; Annotation.timestamp or zipkin_spans.timestamp',
+  `endpoint_ipv4` int(11) DEFAULT NULL COMMENT 'Null when Binary/Annotation.endpoint is null',
+  `endpoint_ipv6` binary(16) DEFAULT NULL COMMENT 'Null when Binary/Annotation.endpoint is null, or no IPv6 address',
+  `endpoint_port` smallint(6) DEFAULT NULL COMMENT 'Null when Binary/Annotation.endpoint is null',
+  `endpoint_service_name` varchar(255) DEFAULT NULL COMMENT 'Null when Binary/Annotation.endpoint is null',
+  UNIQUE KEY `trace_id_high` (`trace_id_high`,`trace_id`,`span_id`,`a_key`,`a_timestamp`) USING BTREE COMMENT 'Ignore insert on duplicate',
+  UNIQUE KEY `trace_id_high_4` (`trace_id_high`,`trace_id`,`span_id`,`a_key`,`a_timestamp`) USING BTREE COMMENT 'Ignore insert on duplicate',
+  KEY `trace_id_high_2` (`trace_id_high`,`trace_id`,`span_id`) USING BTREE COMMENT 'for joining with zipkin_spans',
+  KEY `trace_id_high_3` (`trace_id_high`,`trace_id`) USING BTREE COMMENT 'for getTraces/ByIds',
+  KEY `endpoint_service_name` (`endpoint_service_name`) USING BTREE COMMENT 'for getTraces and getServiceNames',
+  KEY `a_type` (`a_type`) USING BTREE COMMENT 'for getTraces',
+  KEY `a_key` (`a_key`) USING BTREE COMMENT 'for getTraces',
+  KEY `trace_id` (`trace_id`,`span_id`,`a_key`) USING BTREE COMMENT 'for dependencies job',
+  KEY `trace_id_high_5` (`trace_id_high`,`trace_id`,`span_id`) USING BTREE COMMENT 'for joining with zipkin_spans',
+  KEY `trace_id_high_6` (`trace_id_high`,`trace_id`) USING BTREE COMMENT 'for getTraces/ByIds',
+  KEY `endpoint_service_name_2` (`endpoint_service_name`) USING BTREE COMMENT 'for getTraces and getServiceNames',
+  KEY `a_type_2` (`a_type`) USING BTREE COMMENT 'for getTraces',
+  KEY `a_key_2` (`a_key`) USING BTREE COMMENT 'for getTraces',
+  KEY `trace_id_2` (`trace_id`,`span_id`,`a_key`) USING BTREE COMMENT 'for dependencies job'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPRESSED;
+
+-- ----------------------------
+-- Records of zipkin_annotations
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for zipkin_dependencies
+-- ----------------------------
+DROP TABLE IF EXISTS `zipkin_dependencies`;
+CREATE TABLE `zipkin_dependencies` (
+  `day` date NOT NULL,
+  `parent` varchar(255) NOT NULL,
+  `child` varchar(255) NOT NULL,
+  `call_count` bigint(20) DEFAULT NULL,
+  UNIQUE KEY `day` (`day`,`parent`,`child`) USING BTREE,
+  UNIQUE KEY `day_2` (`day`,`parent`,`child`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPRESSED;
+
+-- ----------------------------
+-- Records of zipkin_dependencies
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for zipkin_spans
+-- ----------------------------
+DROP TABLE IF EXISTS `zipkin_spans`;
+CREATE TABLE `zipkin_spans` (
+  `trace_id_high` bigint(20) NOT NULL DEFAULT '0' COMMENT 'If non zero, this means the trace uses 128 bit traceIds instead of 64 bit',
+  `trace_id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `parent_id` bigint(20) DEFAULT NULL,
+  `debug` bit(1) DEFAULT NULL,
+  `start_ts` bigint(20) DEFAULT NULL COMMENT 'Span.timestamp(): epoch micros used for endTs query and to implement TTL',
+  `duration` bigint(20) DEFAULT NULL COMMENT 'Span.duration(): micros used for minDuration and maxDuration query',
+  UNIQUE KEY `trace_id_high` (`trace_id_high`,`trace_id`,`id`) USING BTREE COMMENT 'ignore insert on duplicate',
+  UNIQUE KEY `trace_id_high_4` (`trace_id_high`,`trace_id`,`id`) USING BTREE COMMENT 'ignore insert on duplicate',
+  KEY `trace_id_high_2` (`trace_id_high`,`trace_id`,`id`) USING BTREE COMMENT 'for joining with zipkin_annotations',
+  KEY `trace_id_high_3` (`trace_id_high`,`trace_id`) USING BTREE COMMENT 'for getTracesByIds',
+  KEY `name` (`name`) USING BTREE COMMENT 'for getTraces and getSpanNames',
+  KEY `start_ts` (`start_ts`) USING BTREE COMMENT 'for getTraces ordering and range',
+  KEY `trace_id_high_5` (`trace_id_high`,`trace_id`,`id`) USING BTREE COMMENT 'for joining with zipkin_annotations',
+  KEY `trace_id_high_6` (`trace_id_high`,`trace_id`) USING BTREE COMMENT 'for getTracesByIds',
+  KEY `name_2` (`name`) USING BTREE COMMENT 'for getTraces and getSpanNames',
+  KEY `start_ts_2` (`start_ts`) USING BTREE COMMENT 'for getTraces ordering and range'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPRESSED;
+
+-- ----------------------------
+-- Records of zipkin_spans
+-- ----------------------------
